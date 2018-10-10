@@ -100,6 +100,8 @@ func RunCreateSuperFile(targetPath string, blockList ...string) {
 
 // RunUpload 执行文件上传
 func RunUpload(localPaths []string, savePath string, opt *UploadOptions) {
+	fmt.Printf(localPaths[0])
+	fmt.Printf(savePath)
 	if opt == nil {
 		opt = &UploadOptions{}
 	}
