@@ -4,6 +4,7 @@ package pcsweb
 import (
 	"fmt"
 	"github.com/GeertJohan/go.rice"
+	"github.com/iikira/BaiduPCS-Go/internal/pcscommand"
 	"net/http"
 )
 
@@ -32,17 +33,25 @@ func StartServer(port uint) error {
 		return fmt.Errorf("invalid port %d", port)
 	}
 
-	err := boxInit()
-	if err != nil {
-		return err
-	}
+	//err := boxInit()
+	//if err != nil {
+	//	return err
+	//}
 
-	http.HandleFunc("/", rootMiddleware)
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(staticBox.HTTPBox())))
-	http.HandleFunc("/about.html", middleware(aboutPage))
-	http.HandleFunc("/index.html", middleware(indexPage))
-	http.HandleFunc("/cgi-bin/baidu/pcs/file/list", activeAuthMiddleware(fileList))
+	//http.HandleFunc("/", rootMiddleware)
+	//http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(staticBox.HTTPBox())))
+	//http.HandleFunc("/about.html", middleware(aboutPage))
+	//http.HandleFunc("/index.html", middleware(indexPage))
+	//http.HandleFunc("/cgi-bin/baidu/pcs/file/list", activeAuthMiddleware(fileList))
+	http.HandleFunc("/upload",uploadfile)
 	return http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+}
+func uploadfile(writer http.ResponseWriter, request *http.Request) {
+	localPath := request.FormValue("localPath")
+	args:=[]string{localPath}
+	savePath := request.FormValue("savePath")
+	pcscommand.RunUpload(args,savePath, nil)
+	fmt.Fprintf(writer,"success")
 }
 
 func aboutPage(w http.ResponseWriter, r *http.Request) {
